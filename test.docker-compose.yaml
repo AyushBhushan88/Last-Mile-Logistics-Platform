@@ -1,0 +1,22 @@
+name: last-mile-log-ptf-test
+
+services:
+  test-runner:
+    container_name: last-mile-log-ptf-test-runner
+    image: golang:1.26-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      - REDIS_ADDR=redis:6379
+      - CGO_ENABLED=1
+    depends_on:
+      - redis
+    command: >
+      sh -c "apk add --no-cache gcc musl-dev && 
+             go mod tidy &&
+             go test -v -tags=integration ./..."
+
+  redis:
+    container_name: last-mile-log-ptf-test-redis
+    image: redis:7.2-alpine

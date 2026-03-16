@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "github.com/ayush/logistics-platform/pkg/api";
+
+import "google/protobuf/timestamp.proto";
+
+service OrderService {
+  // Create a new delivery order
+  rpc CreateOrder(CreateOrderRequest) returns (Order);
+
+  // Get order details
+  rpc GetOrder(GetOrderRequest) returns (Order);
+
+  // Update order status (internal/driver use)
+  rpc UpdateOrderStatus(UpdateOrderStatusRequest) returns (Order);
+
+  // Stream order updates for a specific customer/order
+  rpc StreamOrderUpdates(StreamOrderUpdatesRequest) returns (stream Order);
+}
+
+enum OrderStatus {
+  ORDER_STATUS_UNKNOWN = 0;
+  ORDER_STATUS_PENDING = 1;      // Searching for driver
+  ORDER_STATUS_MATCHED = 2;      // Driver found and assigned
+  ORDER_STATUS_PICKING_UP = 3;   // Driver moving to pickup location
+  ORDER_STATUS_PICKED_UP = 4;    // Item picked up
+  ORDER_STATUS_IN_TRANSIT = 5;   // Moving to delivery location
+  ORDER_STATUS_DELIVERED = 6;    // Completed
+  ORDER_STATUS_CANCELLED = 7;    // Aborted
+}
+
+message Order {
+  string order_id = 1;
+  string customer_id = 2;
+  string driver_id = 3;
+  
+  double pickup_latitude = 4;
+  double pickup_longitude = 5;
+  
+  double delivery_latitude = 6;
+  double delivery_longitude = 7;
+  
+  OrderStatus status = 8;
+  
+  int64 created_at = 9;
+  int64 updated_at = 10;
+  
+  double estimated_eta_seconds = 11;
+  double price = 12;
+}
+
+message CreateOrderRequest {
+  string customer_id = 1;
+  double pickup_latitude = 2;
+  double pickup_longitude = 3;
+  double delivery_latitude = 4;
+  double delivery_longitude = 5;
+}
+
+message GetOrderRequest {
+  string order_id = 1;
+}
+
+message UpdateOrderStatusRequest {
+  string order_id = 1;
+  OrderStatus status = 2;
+  string driver_id = 3; // Optional: used when matching
+}
+
+message StreamOrderUpdatesRequest {
+  string order_id = 1;
+}

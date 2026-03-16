@@ -67,13 +67,17 @@ func (si *SpatialIndexer) processMessage(ctx context.Context, message redis.XMes
 
 	// Convert to H3 Index
 	latLng := h3.NewLatLng(lat, lng)
-	cell := h3.LatLngToCell(latLng, 9) // Resolution 9
+	cell, err := h3.LatLngToCell(latLng, 9) // Resolution 9
+	if err != nil {
+		log.Printf("Failed to convert LatLng to H3 cell: %v", err)
+		return
+	}
 
 	log.Printf("Processing driver %s: (%f, %f) -> H3 Cell: %v", driverID, lat, lng, cell)
 
 	// Update Redis GEO or H3-based set
 	// For now, we'll use GEOADD for fast radius queries in Phase 2
-	err := si.redisClient.GeoAdd(ctx, "drivers_geo", &redis.GeoLocation{
+	err = si.redisClient.GeoAdd(ctx, "drivers_geo", &redis.GeoLocation{
 		Name:      driverID,
 		Latitude:  lat,
 		Longitude: lng,

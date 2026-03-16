@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/ayush/logistics-platform/internal/ingestor"
+	"github.com/ayush/logistics-platform/internal/order"
 	"github.com/ayush/logistics-platform/pkg/api"
 	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
@@ -53,10 +54,16 @@ func main() {
 	}
 
 	s := grpc.NewServer()
-	handler := ingestor.NewLocationHandler(redisClient, cfg.Redis.StreamName)
-	api.RegisterLocationServiceServer(s, handler)
+	
+	// Register Location Service
+	locationHandler := ingestor.NewLocationHandler(redisClient, cfg.Redis.StreamName)
+	api.RegisterLocationServiceServer(s, locationHandler)
 
-	fmt.Printf("Starting gRPC Ingestor Service on :%d...\n", cfg.Server.GRPCPort)
+	// Register Order Service
+	orderHandler := order.NewOrderHandler(redisClient)
+	api.RegisterOrderServiceServer(s, orderHandler)
+
+	fmt.Printf("Starting gRPC Services (Location + Order) on :%d...\n", cfg.Server.GRPCPort)
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}

@@ -1,5 +1,8 @@
+name: last-mile-log-ptf
+
 services:
   db:
+    container_name: last-mile-log-ptf-db
     image: postgis/postgis:16-3.4
     environment:
       POSTGRES_USER: postgres
@@ -11,12 +14,14 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   redis:
+    container_name: last-mile-log-ptf-redis
     image: redis:7.2-alpine
     ports:
       - "6379:6379"
     command: ["redis-server", "--appendonly", "yes"]
 
   ingestor:
+    container_name: last-mile-log-ptf-ingestor
     build:
       context: .
       dockerfile: Dockerfile
@@ -31,6 +36,7 @@ services:
       - "50051:50051"
 
   spatial-indexer:
+    container_name: last-mile-log-ptf-spatial-indexer
     build:
       context: .
       dockerfile: Dockerfile
