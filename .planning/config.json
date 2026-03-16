@@ -1,0 +1,14 @@
+{
+  "project_name": "Last-Mile Logistics & Geo-Routing Platform",
+  "tech_stack": {
+    "backend": "Go (Golang)",
+    "database": "PostgreSQL + PostGIS",
+    "cache_realtime": "Redis",
+    "infrastructure": "Kubernetes (K8s) Ready"
+  },
+  "workflow_preferences": {
+    "research_depth": "Comprehensive",
+    "scale": "Production Grade",
+    "mode": "auto"
+  }
+}

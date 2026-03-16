@@ -1,0 +1,14 @@
+server:
+  http_port: 8080
+  grpc_port: 50051
+
+redis:
+  addr: "localhost:6379"
+  stream_name: "driver_updates"
+
+spatial_indexer:
+  group_name: "spatial_indexer_group"
+  consumer_id: "spatial_indexer_1"
+
+database:
+  dsn: "postgres://postgres:password@localhost:5432/logistics?sslmode=disable"

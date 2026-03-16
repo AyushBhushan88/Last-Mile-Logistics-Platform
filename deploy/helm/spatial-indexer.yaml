@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spatial-indexer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: spatial-indexer
+  template:
+    metadata:
+      labels:
+        app: spatial-indexer
+    spec:
+      containers:
+      - name: spatial-indexer
+        image: logistics-platform/spatial-indexer:latest
+        command: ["./spatial-indexer"]
+        env:
+        - name: REDIS_ADDR
+          value: "redis:6379"

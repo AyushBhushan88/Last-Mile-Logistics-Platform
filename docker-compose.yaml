@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: logistics
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7.2-alpine
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+
+  ingestor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - REDIS_ADDR=redis:6379
+      - DB_DSN=postgres://postgres:password@db:5432/logistics?sslmode=disable
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "8080:8080"
+      - "50051:50051"
+
+  spatial-indexer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["./spatial-indexer"]
+    environment:
+      - REDIS_ADDR=redis:6379
+    depends_on:
+      - redis
+
+volumes:
+  pgdata:

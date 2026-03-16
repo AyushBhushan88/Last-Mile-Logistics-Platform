@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "github.com/ayush/logistics-platform/pkg/api";
+
+service LocationService {
+  // Bi-directional stream for real-time location updates
+  rpc UpdateLocation(stream LocationUpdate) returns (LocationResponse);
+
+  // Query drivers in a specific radius
+  rpc GetDriversInRadius(RadiusQuery) returns (DriverList);
+}
+
+message LocationUpdate {
+  string driver_id = 1;
+  double latitude = 2;
+  double longitude = 3;
+  int64 timestamp = 4;
+}
+
+message LocationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message RadiusQuery {
+  double latitude = 1;
+  double longitude = 2;
+  double radius_km = 3;
+}
+
+message Driver {
+  string driver_id = 1;
+  double latitude = 2;
+  double longitude = 3;
+  double distance_km = 4;
+}
+
+message DriverList {
+  repeated Driver drivers = 1;
+}
