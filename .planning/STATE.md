@@ -16,6 +16,7 @@
 - [x] Implement Customer WebSocket service for live updates.
 - [x] Build the "Tracking Stream" aggregator (Redis Pub/Sub).
 - [x] Implement Haversine-based ETA calculation.
+- [x] Comprehensive unit testing for all services (Phase 1-3).
 
 ## Technical Decisions
 1. **Spatial Index:** H3 (Hexagonal) selected over Geohash for consistent neighbor distance.
