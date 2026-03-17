@@ -14,13 +14,13 @@
 - [x] Implement Driver GoOnline/GoOffline and Radius Search.
 - [x] Build the Matching Engine (Redis Radius search).
 - [ ] Integrate A* or OSRM for ETA calculations.
-- [ ] Implement Driver Assignment State Machine (using Temporal.io).
-- [ ] **Milestone:** Order is automatically assigned to the nearest driver.
+- [x] Implement Driver Assignment State Machine (with timeouts and retries).
+- [x] **Milestone:** Order is automatically assigned to the nearest driver.
 
 ## Phase 3: Live Tracking & Customer Experience
 **Goal:** Stream location data to the end-user.
-- [ ] Implement Customer WebSocket service for live updates.
-- [ ] Build the "Tracking Stream" aggregator (Redis Pub/Sub).
+- [x] Implement Customer WebSocket service for live updates.
+- [x] Build the "Tracking Stream" aggregator (Redis Pub/Sub).
 - [ ] Dynamic ETA updates based on live traffic/location.
 - [ ] **Milestone:** Customer sees driver moving on a map in real-time.
 

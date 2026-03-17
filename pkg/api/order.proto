@@ -18,6 +18,15 @@ service OrderService {
 
   // Stream order updates for a specific customer/order
   rpc StreamOrderUpdates(StreamOrderUpdatesRequest) returns (stream Order);
+
+  // Driver response to an assignment offer
+  rpc AcceptOrder(DriverOrderActionRequest) returns (Order);
+  rpc RejectOrder(DriverOrderActionRequest) returns (Order);
+}
+
+message DriverOrderActionRequest {
+  string order_id = 1;
+  string driver_id = 2;
 }
 
 enum OrderStatus {
@@ -49,6 +58,9 @@ message Order {
   
   double estimated_eta_seconds = 11;
   double price = 12;
+
+  double current_latitude = 13;
+  double current_longitude = 14;
 }
 
 message CreateOrderRequest {

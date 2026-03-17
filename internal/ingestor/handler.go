@@ -2,6 +2,8 @@ package ingestor
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 
@@ -37,7 +39,7 @@ func (h *LocationHandler) UpdateLocation(stream api.LocationService_UpdateLocati
 
 		log.Printf("Received update from driver %s: (%f, %f)", update.DriverId, update.Latitude, update.Longitude)
 
-		// Push to Redis Stream
+		// Push to Redis Stream for persistent processing
 		err = h.redisClient.XAdd(context.Background(), &redis.XAddArgs{
 			Stream: h.streamName,
 			Values: map[string]interface{}{
@@ -49,7 +51,15 @@ func (h *LocationHandler) UpdateLocation(stream api.LocationService_UpdateLocati
 		}).Err()
 
 		if err != nil {
-			log.Printf("Failed to push to Redis: %v", err)
+			log.Printf("Failed to push to Redis Stream: %v", err)
+		}
+
+		// Publish to Redis Pub/Sub for real-time tracking
+		data, _ := json.Marshal(update)
+		channel := fmt.Sprintf("driver_location:%s", update.DriverId)
+		err = h.redisClient.Publish(context.Background(), channel, data).Err()
+		if err != nil {
+			log.Printf("Failed to publish to Redis Pub/Sub: %v", err)
 		}
 	}
 }
