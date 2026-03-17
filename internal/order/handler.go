@@ -7,6 +7,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/ayush/logistics-platform/internal/metrics"
 	"github.com/ayush/logistics-platform/internal/tracking"
 	"github.com/ayush/logistics-platform/pkg/api"
 	"github.com/redis/go-redis/v9"
@@ -56,6 +57,9 @@ func (h *OrderHandler) CreateOrder(ctx context.Context, req *api.CreateOrderRequ
 	}
 
 	log.Printf("Created order: %s for customer: %s", orderID, req.CustomerId)
+
+	// Increment metrics
+	metrics.OrdersCreated.Inc()
 	
 	// Start Assignment Flow
 	if h.matchingEngine != nil {
@@ -70,9 +74,16 @@ func (h *OrderHandler) assignmentWorkflow(order *api.Order) {
 	maxAttempts := 5
 	attempt := 0
 
+	startTime := time.Now()
+
 	for attempt < maxAttempts {
 		attempt++
 		log.Printf("Assignment attempt %d for order %s", attempt, order.OrderId)
+
+		// Record retry metric if attempt > 1
+		if attempt > 1 {
+			metrics.MatchingRetries.WithLabelValues(order.OrderId).Inc()
+		}
 
 		driverID, eta, err := h.matchingEngine.FindDriver(ctx, order)
 		if err != nil {
@@ -102,6 +113,9 @@ func (h *OrderHandler) assignmentWorkflow(order *api.Order) {
 		accepted := h.waitForAcceptance(ctx, order.OrderId, driverID, 30*time.Second)
 		if accepted {
 			log.Printf("Driver %s accepted order %s", driverID, order.OrderId)
+			
+			// Record success duration metric
+			metrics.MatchingDuration.Observe(time.Since(startTime).Seconds())
 			return
 		}
 

@@ -1,9 +1,9 @@
 # Project State: Last-Mile Logistics Platform
 
 ## Current Status
-- **Phase:** 3 - Live Tracking & Customer Experience (Completed)
-- **Active Task:** Finalizing Phase 3 and preparing for Production Readiness
-- **Last Milestone:** Haversine-based ETA calculation integrated into Matching Engine.
+- **Phase:** 4 - Production Readiness & Optimization (In Progress)
+- **Active Task:** Implementing Metrics & Observability (Prometheus)
+- **Last Milestone:** Phase 3 completed with full unit test coverage.
 
 ## Completed Milestones
 - [x] Project scaffolding and Go module initialization.

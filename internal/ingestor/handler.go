@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 
+	"github.com/ayush/logistics-platform/internal/metrics"
 	"github.com/ayush/logistics-platform/pkg/api"
 	"github.com/redis/go-redis/v9"
 )
@@ -39,6 +40,9 @@ func (h *LocationHandler) UpdateLocation(stream api.LocationService_UpdateLocati
 
 		log.Printf("Received update from driver %s: (%f, %f)", update.DriverId, update.Latitude, update.Longitude)
 
+		// Increment metrics
+		metrics.LocationUpdates.Inc()
+
 		// Push to Redis Stream for persistent processing
 		err = h.redisClient.XAdd(context.Background(), &redis.XAddArgs{
 			Stream: h.streamName,
@@ -70,6 +74,10 @@ func (h *LocationHandler) GoOnline(ctx context.Context, req *api.DriverStatusReq
 		return nil, err
 	}
 	log.Printf("Driver %s is now online", req.DriverId)
+
+	// Increment metrics
+	metrics.ActiveDrivers.Inc()
+
 	return &api.LocationResponse{Success: true, Message: "Online"}, nil
 }
 
@@ -82,6 +90,10 @@ func (h *LocationHandler) GoOffline(ctx context.Context, req *api.DriverStatusRe
 	h.redisClient.ZRem(ctx, "online_drivers_geo", req.DriverId)
 
 	log.Printf("Driver %s is now offline", req.DriverId)
+
+	// Decrement metrics
+	metrics.ActiveDrivers.Dec()
+
 	return &api.LocationResponse{Success: true, Message: "Offline"}, nil
 }
 

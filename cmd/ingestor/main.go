@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/http"
 	"os"
 
 	"github.com/ayush/logistics-platform/internal/ingestor"
 	"github.com/ayush/logistics-platform/internal/order"
 	"github.com/ayush/logistics-platform/pkg/api"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
 	"gopkg.in/yaml.v3"
@@ -26,7 +28,7 @@ type Config struct {
 }
 
 func main() {
-	// Load config
+	// ... (config loading)
 	configPath := "config/config.yaml"
 	if os.Getenv("CONFIG_PATH") != "" {
 		configPath = os.Getenv("CONFIG_PATH")
@@ -47,7 +49,16 @@ func main() {
 		Addr: cfg.Redis.Addr,
 	})
 
-	// Initialize gRPC server
+	// 1. Start Prometheus Metrics Server (HTTP)
+	go func() {
+		http.Handle("/metrics", promhttp.Handler())
+		fmt.Printf("Starting Metrics Server on :%d/metrics...\n", cfg.Server.HTTPPort)
+		if err := http.ListenAndServe(fmt.Sprintf(":%d", cfg.Server.HTTPPort), nil); err != nil {
+			log.Fatalf("Failed to start metrics server: %v", err)
+		}
+	}()
+
+	// 2. Initialize gRPC server
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Server.GRPCPort))
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)

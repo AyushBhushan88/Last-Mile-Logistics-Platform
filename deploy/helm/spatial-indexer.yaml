@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: spatial-indexer
 spec:
-  replicas: 2
+  # Replicas managed by HPA
   selector:
     matchLabels:
       app: spatial-indexer
@@ -16,6 +16,32 @@ spec:
       - name: spatial-indexer
         image: logistics-platform/spatial-indexer:latest
         command: ["./spatial-indexer"]
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
         env:
         - name: REDIS_ADDR
           value: "redis:6379"
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: spatial-indexer-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: spatial-indexer
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 60
