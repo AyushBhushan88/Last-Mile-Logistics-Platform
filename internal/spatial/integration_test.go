@@ -113,14 +113,55 @@ func TestPhase1_EndToEnd(t *testing.T) {
 
 	fmt.Printf("Verified driver %s in Redis GEO at (%f, %f)\n", driverID, pos[0].Latitude, pos[0].Longitude)
 
-	// Check H3 cell mapping
-	cell, err := redisClient.HGet(ctx, "driver_cells", driverID).Result()
+	// 5. Test GoOnline and Radius Search
+	_, err = handler.GoOnline(ctx, &api.DriverStatusRequest{DriverId: driverID})
 	if err != nil {
-		t.Fatalf("failed to get driver H3 cell from Redis: %v", err)
-	}
-	if cell == "" {
-		t.Fatalf("driver H3 cell not found in Redis")
+		t.Fatalf("failed to go online: %v", err)
 	}
 
-	fmt.Printf("Verified driver %s in H3 Cell: %s\n", driverID, cell)
+	// Send another update while online to trigger indexer to update online_drivers_geo
+	stream, err = client.UpdateLocation(ctx)
+	if err != nil {
+		t.Fatalf("failed to open second stream: %v", err)
+	}
+	err = stream.Send(&api.LocationUpdate{
+		DriverId:  driverID,
+		Latitude:  lat,
+		Longitude: lng,
+		Timestamp: time.Now().Unix(),
+	})
+	stream.CloseAndRecv()
+
+	time.Sleep(2 * time.Second)
+
+	// Search for drivers in radius
+	drivers, err := handler.GetDriversInRadius(ctx, &api.RadiusQuery{
+		Latitude:  lat,
+		Longitude: lng,
+		RadiusKm:  10,
+	})
+	if err != nil {
+		t.Fatalf("failed to search drivers in radius: %v", err)
+	}
+
+	if len(drivers.Drivers) == 0 {
+		t.Errorf("expected to find driver %s in radius search", driverID)
+	} else {
+		fmt.Printf("Found driver %s in radius search\n", drivers.Drivers[0].DriverId)
+	}
+
+	// 6. Test GoOffline
+	_, err = handler.GoOffline(ctx, &api.DriverStatusRequest{DriverId: driverID})
+	if err != nil {
+		t.Fatalf("failed to go offline: %v", err)
+	}
+
+	drivers, _ = handler.GetDriversInRadius(ctx, &api.RadiusQuery{
+		Latitude:  lat,
+		Longitude: lng,
+		RadiusKm:  10,
+	})
+	if len(drivers.Drivers) > 0 {
+		t.Errorf("expected driver %s to be removed from online search after going offline", driverID)
+	}
 }

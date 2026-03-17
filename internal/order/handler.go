@@ -13,13 +13,18 @@ import (
 
 type OrderHandler struct {
 	api.UnimplementedOrderServiceServer
-	redisClient *redis.Client
+	redisClient    *redis.Client
+	matchingEngine *MatchingEngine
 }
 
 func NewOrderHandler(redisClient *redis.Client) *OrderHandler {
 	return &OrderHandler{
 		redisClient: redisClient,
 	}
+}
+
+func (h *OrderHandler) SetMatchingEngine(me *MatchingEngine) {
+	h.matchingEngine = me
 }
 
 func (h *OrderHandler) CreateOrder(ctx context.Context, req *api.CreateOrderRequest) (*api.Order, error) {
@@ -49,7 +54,26 @@ func (h *OrderHandler) CreateOrder(ctx context.Context, req *api.CreateOrderRequ
 
 	log.Printf("Created order: %s for customer: %s", orderID, req.CustomerId)
 	
-	// TODO: Trigger Matching Engine
+	// Trigger Matching Engine (Async)
+	if h.matchingEngine != nil {
+		go func() {
+			driverID, err := h.matchingEngine.FindDriver(context.Background(), order)
+			if err != nil {
+				log.Printf("Matching failed for order %s: %v", orderID, err)
+				return
+			}
+			if driverID != "" {
+				// Assign Driver
+				h.UpdateOrderStatus(context.Background(), &api.UpdateOrderStatusRequest{
+					OrderId:  orderID,
+					Status:   api.OrderStatus_ORDER_STATUS_MATCHED,
+					DriverId: driverID,
+				})
+				// Mark driver as busy
+				h.redisClient.SAdd(context.Background(), "busy_drivers", driverID)
+			}
+		}()
+	}
 	
 	return order, nil
 }

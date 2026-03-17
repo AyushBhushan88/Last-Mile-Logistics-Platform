@@ -2,7 +2,6 @@ package ingestor
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"log"
 
@@ -55,7 +54,52 @@ func (h *LocationHandler) UpdateLocation(stream api.LocationService_UpdateLocati
 	}
 }
 
+func (h *LocationHandler) GoOnline(ctx context.Context, req *api.DriverStatusRequest) (*api.LocationResponse, error) {
+	err := h.redisClient.SAdd(ctx, "online_drivers", req.DriverId).Err()
+	if err != nil {
+		return nil, err
+	}
+	log.Printf("Driver %s is now online", req.DriverId)
+	return &api.LocationResponse{Success: true, Message: "Online"}, nil
+}
+
+func (h *LocationHandler) GoOffline(ctx context.Context, req *api.DriverStatusRequest) (*api.LocationResponse, error) {
+	err := h.redisClient.SRem(ctx, "online_drivers", req.DriverId).Err()
+	if err != nil {
+		return nil, err
+	}
+	// Also remove from online_drivers_geo to be safe
+	h.redisClient.ZRem(ctx, "online_drivers_geo", req.DriverId)
+
+	log.Printf("Driver %s is now offline", req.DriverId)
+	return &api.LocationResponse{Success: true, Message: "Offline"}, nil
+}
+
 func (h *LocationHandler) GetDriversInRadius(ctx context.Context, req *api.RadiusQuery) (*api.DriverList, error) {
-	// To be implemented in Phase 2
-	return nil, fmt.Errorf("method not implemented")
+	// Search Redis for drivers within the specified radius in online_drivers_geo
+	results, err := h.redisClient.GeoRadius(ctx, "online_drivers_geo", req.Longitude, req.Latitude, &redis.GeoRadiusQuery{
+		Radius:      req.RadiusKm,
+		Unit:        "km",
+		WithDist:    true,
+		WithCoord:   true,
+		Sort:        "ASC",
+		Count:       50,
+	}).Result()
+
+	if err != nil {
+		log.Printf("Failed to query Redis for drivers in radius: %v", err)
+		return nil, err
+	}
+
+	drivers := make([]*api.Driver, 0, len(results))
+	for _, result := range results {
+		drivers = append(drivers, &api.Driver{
+			DriverId:    result.Name,
+			Latitude:    result.Latitude,
+			Longitude:   result.Longitude,
+			DistanceKm: result.Dist,
+		})
+	}
+
+	return &api.DriverList{Drivers: drivers}, nil
 }

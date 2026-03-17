@@ -1,16 +1,17 @@
 # Project State: Last-Mile Logistics Platform
 
 ## Current Status
-- **Phase:** 1 - Foundation & Real-Time Ingestion (Completed)
-- **Active Task:** Starting Phase 2 - Dispatching & Matching Logic
-- **Last Milestone:** High-throughput location ingestion pipeline implemented.
+- **Phase:** 2 - Dispatching & Matching Logic (In Progress)
+- **Active Task:** Integrating Matching Engine with Order Creation
+- **Last Milestone:** Initial matching engine implemented using Redis Radius Search.
 
 ## Completed Milestones
 - [x] Project scaffolding and Go module initialization.
-- [x] gRPC API definitions for location updates.
+- [x] gRPC API definitions for location and order management.
 - [x] Ingestor service with Redis Streams integration.
 - [x] Spatial Indexer with H3 (hexagonal) indexing.
-- [x] Docker Compose and Kubernetes manifests (scaffolding).
+- [x] Implement GetDriversInRadius and Online/Offline status tracking.
+- [x] Basic Matching Engine that assigns nearest online driver to a pending order.
 
 ## Technical Decisions
 1. **Spatial Index:** H3 (Hexagonal) selected over Geohash for consistent neighbor distance.

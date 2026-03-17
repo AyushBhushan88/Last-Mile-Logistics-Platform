@@ -10,8 +10,9 @@
 
 ## Phase 2: Dispatching & Matching Logic
 **Goal:** Match orders to drivers efficiently.
-- [ ] Implement Order Creation API.
-- [ ] Build the Matching Engine (H3 Neighbor Search + Radius Filter).
+- [x] Implement Order Creation API.
+- [x] Implement Driver GoOnline/GoOffline and Radius Search.
+- [x] Build the Matching Engine (Redis Radius search).
 - [ ] Integrate A* or OSRM for ETA calculations.
 - [ ] Implement Driver Assignment State Machine (using Temporal.io).
 - [ ] **Milestone:** Order is automatically assigned to the nearest driver.

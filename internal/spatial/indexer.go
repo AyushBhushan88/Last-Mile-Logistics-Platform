@@ -87,6 +87,22 @@ func (si *SpatialIndexer) processMessage(ctx context.Context, message redis.XMes
 		log.Printf("Failed to update driver location in Redis: %v", err)
 	}
 
+	// Also update online_drivers_geo if the driver is online
+	isOnline, _ := si.redisClient.SIsMember(ctx, "online_drivers", driverID).Result()
+	if isOnline {
+		err = si.redisClient.GeoAdd(ctx, "online_drivers_geo", &redis.GeoLocation{
+			Name:      driverID,
+			Latitude:  lat,
+			Longitude: lng,
+		}).Err()
+		if err != nil {
+			log.Printf("Failed to update online driver location in Redis: %v", err)
+		}
+	} else {
+		// Just in case, remove from online_drivers_geo if not online
+		si.redisClient.ZRem(ctx, "online_drivers_geo", driverID)
+	}
+
 	// Also store H3 cell mapping for quick neighbor expansion
 	err = si.redisClient.HSet(ctx, "driver_cells", driverID, cell.String()).Err()
 	if err != nil {

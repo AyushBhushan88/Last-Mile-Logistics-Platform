@@ -10,6 +10,14 @@ service LocationService {
 
   // Query drivers in a specific radius
   rpc GetDriversInRadius(RadiusQuery) returns (DriverList);
+
+  // Driver status management
+  rpc GoOnline(DriverStatusRequest) returns (LocationResponse);
+  rpc GoOffline(DriverStatusRequest) returns (LocationResponse);
+}
+
+message DriverStatusRequest {
+  string driver_id = 1;
 }
 
 message LocationUpdate {

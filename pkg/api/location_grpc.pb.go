@@ -21,6 +21,8 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	LocationService_UpdateLocation_FullMethodName     = "/api.LocationService/UpdateLocation"
 	LocationService_GetDriversInRadius_FullMethodName = "/api.LocationService/GetDriversInRadius"
+	LocationService_GoOnline_FullMethodName           = "/api.LocationService/GoOnline"
+	LocationService_GoOffline_FullMethodName          = "/api.LocationService/GoOffline"
 )
 
 // LocationServiceClient is the client API for LocationService service.
@@ -31,6 +33,9 @@ type LocationServiceClient interface {
 	UpdateLocation(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[LocationUpdate, LocationResponse], error)
 	// Query drivers in a specific radius
 	GetDriversInRadius(ctx context.Context, in *RadiusQuery, opts ...grpc.CallOption) (*DriverList, error)
+	// Driver status management
+	GoOnline(ctx context.Context, in *DriverStatusRequest, opts ...grpc.CallOption) (*LocationResponse, error)
+	GoOffline(ctx context.Context, in *DriverStatusRequest, opts ...grpc.CallOption) (*LocationResponse, error)
 }
 
 type locationServiceClient struct {
@@ -64,6 +69,26 @@ func (c *locationServiceClient) GetDriversInRadius(ctx context.Context, in *Radi
 	return out, nil
 }
 
+func (c *locationServiceClient) GoOnline(ctx context.Context, in *DriverStatusRequest, opts ...grpc.CallOption) (*LocationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LocationResponse)
+	err := c.cc.Invoke(ctx, LocationService_GoOnline_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *locationServiceClient) GoOffline(ctx context.Context, in *DriverStatusRequest, opts ...grpc.CallOption) (*LocationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LocationResponse)
+	err := c.cc.Invoke(ctx, LocationService_GoOffline_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LocationServiceServer is the server API for LocationService service.
 // All implementations must embed UnimplementedLocationServiceServer
 // for forward compatibility.
@@ -72,6 +97,9 @@ type LocationServiceServer interface {
 	UpdateLocation(grpc.ClientStreamingServer[LocationUpdate, LocationResponse]) error
 	// Query drivers in a specific radius
 	GetDriversInRadius(context.Context, *RadiusQuery) (*DriverList, error)
+	// Driver status management
+	GoOnline(context.Context, *DriverStatusRequest) (*LocationResponse, error)
+	GoOffline(context.Context, *DriverStatusRequest) (*LocationResponse, error)
 	mustEmbedUnimplementedLocationServiceServer()
 }
 
@@ -87,6 +115,12 @@ func (UnimplementedLocationServiceServer) UpdateLocation(grpc.ClientStreamingSer
 }
 func (UnimplementedLocationServiceServer) GetDriversInRadius(context.Context, *RadiusQuery) (*DriverList, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetDriversInRadius not implemented")
+}
+func (UnimplementedLocationServiceServer) GoOnline(context.Context, *DriverStatusRequest) (*LocationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GoOnline not implemented")
+}
+func (UnimplementedLocationServiceServer) GoOffline(context.Context, *DriverStatusRequest) (*LocationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GoOffline not implemented")
 }
 func (UnimplementedLocationServiceServer) mustEmbedUnimplementedLocationServiceServer() {}
 func (UnimplementedLocationServiceServer) testEmbeddedByValue()                         {}
@@ -134,6 +168,42 @@ func _LocationService_GetDriversInRadius_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LocationService_GoOnline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DriverStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LocationServiceServer).GoOnline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LocationService_GoOnline_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LocationServiceServer).GoOnline(ctx, req.(*DriverStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LocationService_GoOffline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DriverStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LocationServiceServer).GoOffline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LocationService_GoOffline_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LocationServiceServer).GoOffline(ctx, req.(*DriverStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // LocationService_ServiceDesc is the grpc.ServiceDesc for LocationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -144,6 +214,14 @@ var LocationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDriversInRadius",
 			Handler:    _LocationService_GetDriversInRadius_Handler,
+		},
+		{
+			MethodName: "GoOnline",
+			Handler:    _LocationService_GoOnline_Handler,
+		},
+		{
+			MethodName: "GoOffline",
+			Handler:    _LocationService_GoOffline_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

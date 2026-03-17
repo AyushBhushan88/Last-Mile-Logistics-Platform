@@ -21,6 +21,50 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type DriverStatusRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DriverId      string                 `protobuf:"bytes,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DriverStatusRequest) Reset() {
+	*x = DriverStatusRequest{}
+	mi := &file_pkg_api_location_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DriverStatusRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DriverStatusRequest) ProtoMessage() {}
+
+func (x *DriverStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_api_location_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DriverStatusRequest.ProtoReflect.Descriptor instead.
+func (*DriverStatusRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_api_location_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *DriverStatusRequest) GetDriverId() string {
+	if x != nil {
+		return x.DriverId
+	}
+	return ""
+}
+
 type LocationUpdate struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DriverId      string                 `protobuf:"bytes,1,opt,name=driver_id,json=driverId,proto3" json:"driver_id,omitempty"`
@@ -33,7 +77,7 @@ type LocationUpdate struct {
 
 func (x *LocationUpdate) Reset() {
 	*x = LocationUpdate{}
-	mi := &file_pkg_api_location_proto_msgTypes[0]
+	mi := &file_pkg_api_location_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -45,7 +89,7 @@ func (x *LocationUpdate) String() string {
 func (*LocationUpdate) ProtoMessage() {}
 
 func (x *LocationUpdate) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_api_location_proto_msgTypes[0]
+	mi := &file_pkg_api_location_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -58,7 +102,7 @@ func (x *LocationUpdate) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LocationUpdate.ProtoReflect.Descriptor instead.
 func (*LocationUpdate) Descriptor() ([]byte, []int) {
-	return file_pkg_api_location_proto_rawDescGZIP(), []int{0}
+	return file_pkg_api_location_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *LocationUpdate) GetDriverId() string {
@@ -99,7 +143,7 @@ type LocationResponse struct {
 
 func (x *LocationResponse) Reset() {
 	*x = LocationResponse{}
-	mi := &file_pkg_api_location_proto_msgTypes[1]
+	mi := &file_pkg_api_location_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -111,7 +155,7 @@ func (x *LocationResponse) String() string {
 func (*LocationResponse) ProtoMessage() {}
 
 func (x *LocationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_api_location_proto_msgTypes[1]
+	mi := &file_pkg_api_location_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -124,7 +168,7 @@ func (x *LocationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LocationResponse.ProtoReflect.Descriptor instead.
 func (*LocationResponse) Descriptor() ([]byte, []int) {
-	return file_pkg_api_location_proto_rawDescGZIP(), []int{1}
+	return file_pkg_api_location_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *LocationResponse) GetSuccess() bool {
@@ -152,7 +196,7 @@ type RadiusQuery struct {
 
 func (x *RadiusQuery) Reset() {
 	*x = RadiusQuery{}
-	mi := &file_pkg_api_location_proto_msgTypes[2]
+	mi := &file_pkg_api_location_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -164,7 +208,7 @@ func (x *RadiusQuery) String() string {
 func (*RadiusQuery) ProtoMessage() {}
 
 func (x *RadiusQuery) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_api_location_proto_msgTypes[2]
+	mi := &file_pkg_api_location_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -177,7 +221,7 @@ func (x *RadiusQuery) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RadiusQuery.ProtoReflect.Descriptor instead.
 func (*RadiusQuery) Descriptor() ([]byte, []int) {
-	return file_pkg_api_location_proto_rawDescGZIP(), []int{2}
+	return file_pkg_api_location_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *RadiusQuery) GetLatitude() float64 {
@@ -213,7 +257,7 @@ type Driver struct {
 
 func (x *Driver) Reset() {
 	*x = Driver{}
-	mi := &file_pkg_api_location_proto_msgTypes[3]
+	mi := &file_pkg_api_location_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -225,7 +269,7 @@ func (x *Driver) String() string {
 func (*Driver) ProtoMessage() {}
 
 func (x *Driver) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_api_location_proto_msgTypes[3]
+	mi := &file_pkg_api_location_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -238,7 +282,7 @@ func (x *Driver) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Driver.ProtoReflect.Descriptor instead.
 func (*Driver) Descriptor() ([]byte, []int) {
-	return file_pkg_api_location_proto_rawDescGZIP(), []int{3}
+	return file_pkg_api_location_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Driver) GetDriverId() string {
@@ -278,7 +322,7 @@ type DriverList struct {
 
 func (x *DriverList) Reset() {
 	*x = DriverList{}
-	mi := &file_pkg_api_location_proto_msgTypes[4]
+	mi := &file_pkg_api_location_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -290,7 +334,7 @@ func (x *DriverList) String() string {
 func (*DriverList) ProtoMessage() {}
 
 func (x *DriverList) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_api_location_proto_msgTypes[4]
+	mi := &file_pkg_api_location_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -303,7 +347,7 @@ func (x *DriverList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DriverList.ProtoReflect.Descriptor instead.
 func (*DriverList) Descriptor() ([]byte, []int) {
-	return file_pkg_api_location_proto_rawDescGZIP(), []int{4}
+	return file_pkg_api_location_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *DriverList) GetDrivers() []*Driver {
@@ -317,7 +361,9 @@ var File_pkg_api_location_proto protoreflect.FileDescriptor
 
 const file_pkg_api_location_proto_rawDesc = "" +
 	"\n" +
-	"\x16pkg/api/location.proto\x12\x03api\"\x85\x01\n" +
+	"\x16pkg/api/location.proto\x12\x03api\"2\n" +
+	"\x13DriverStatusRequest\x12\x1b\n" +
+	"\tdriver_id\x18\x01 \x01(\tR\bdriverId\"\x85\x01\n" +
 	"\x0eLocationUpdate\x12\x1b\n" +
 	"\tdriver_id\x18\x01 \x01(\tR\bdriverId\x12\x1a\n" +
 	"\blatitude\x18\x02 \x01(\x01R\blatitude\x12\x1c\n" +
@@ -338,10 +384,12 @@ const file_pkg_api_location_proto_rawDesc = "" +
 	"distanceKm\"3\n" +
 	"\n" +
 	"DriverList\x12%\n" +
-	"\adrivers\x18\x01 \x03(\v2\v.api.DriverR\adrivers2\x8a\x01\n" +
+	"\adrivers\x18\x01 \x03(\v2\v.api.DriverR\adrivers2\x85\x02\n" +
 	"\x0fLocationService\x12>\n" +
 	"\x0eUpdateLocation\x12\x13.api.LocationUpdate\x1a\x15.api.LocationResponse(\x01\x127\n" +
-	"\x12GetDriversInRadius\x12\x10.api.RadiusQuery\x1a\x0f.api.DriverListB-Z+github.com/ayush/logistics-platform/pkg/apib\x06proto3"
+	"\x12GetDriversInRadius\x12\x10.api.RadiusQuery\x1a\x0f.api.DriverList\x12;\n" +
+	"\bGoOnline\x12\x18.api.DriverStatusRequest\x1a\x15.api.LocationResponse\x12<\n" +
+	"\tGoOffline\x12\x18.api.DriverStatusRequest\x1a\x15.api.LocationResponseB-Z+github.com/ayush/logistics-platform/pkg/apib\x06proto3"
 
 var (
 	file_pkg_api_location_proto_rawDescOnce sync.Once
@@ -355,22 +403,27 @@ func file_pkg_api_location_proto_rawDescGZIP() []byte {
 	return file_pkg_api_location_proto_rawDescData
 }
 
-var file_pkg_api_location_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_pkg_api_location_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_pkg_api_location_proto_goTypes = []any{
-	(*LocationUpdate)(nil),   // 0: api.LocationUpdate
-	(*LocationResponse)(nil), // 1: api.LocationResponse
-	(*RadiusQuery)(nil),      // 2: api.RadiusQuery
-	(*Driver)(nil),           // 3: api.Driver
-	(*DriverList)(nil),       // 4: api.DriverList
+	(*DriverStatusRequest)(nil), // 0: api.DriverStatusRequest
+	(*LocationUpdate)(nil),      // 1: api.LocationUpdate
+	(*LocationResponse)(nil),    // 2: api.LocationResponse
+	(*RadiusQuery)(nil),         // 3: api.RadiusQuery
+	(*Driver)(nil),              // 4: api.Driver
+	(*DriverList)(nil),          // 5: api.DriverList
 }
 var file_pkg_api_location_proto_depIdxs = []int32{
-	3, // 0: api.DriverList.drivers:type_name -> api.Driver
-	0, // 1: api.LocationService.UpdateLocation:input_type -> api.LocationUpdate
-	2, // 2: api.LocationService.GetDriversInRadius:input_type -> api.RadiusQuery
-	1, // 3: api.LocationService.UpdateLocation:output_type -> api.LocationResponse
-	4, // 4: api.LocationService.GetDriversInRadius:output_type -> api.DriverList
-	3, // [3:5] is the sub-list for method output_type
-	1, // [1:3] is the sub-list for method input_type
+	4, // 0: api.DriverList.drivers:type_name -> api.Driver
+	1, // 1: api.LocationService.UpdateLocation:input_type -> api.LocationUpdate
+	3, // 2: api.LocationService.GetDriversInRadius:input_type -> api.RadiusQuery
+	0, // 3: api.LocationService.GoOnline:input_type -> api.DriverStatusRequest
+	0, // 4: api.LocationService.GoOffline:input_type -> api.DriverStatusRequest
+	2, // 5: api.LocationService.UpdateLocation:output_type -> api.LocationResponse
+	5, // 6: api.LocationService.GetDriversInRadius:output_type -> api.DriverList
+	2, // 7: api.LocationService.GoOnline:output_type -> api.LocationResponse
+	2, // 8: api.LocationService.GoOffline:output_type -> api.LocationResponse
+	5, // [5:9] is the sub-list for method output_type
+	1, // [1:5] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
@@ -387,7 +440,7 @@ func file_pkg_api_location_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pkg_api_location_proto_rawDesc), len(file_pkg_api_location_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
