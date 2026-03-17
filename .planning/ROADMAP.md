@@ -13,7 +13,7 @@
 - [x] Implement Order Creation API.
 - [x] Implement Driver GoOnline/GoOffline and Radius Search.
 - [x] Build the Matching Engine (Redis Radius search).
-- [ ] Integrate A* or OSRM for ETA calculations.
+- [x] Implement Haversine-based ETA calculation.
 - [x] Implement Driver Assignment State Machine (with timeouts and retries).
 - [x] **Milestone:** Order is automatically assigned to the nearest driver.
 
@@ -21,8 +21,8 @@
 **Goal:** Stream location data to the end-user.
 - [x] Implement Customer WebSocket service for live updates.
 - [x] Build the "Tracking Stream" aggregator (Redis Pub/Sub).
-- [ ] Dynamic ETA updates based on live traffic/location.
-- [ ] **Milestone:** Customer sees driver moving on a map in real-time.
+- [x] Dynamic ETA updates based on live tracking.
+- [x] **Milestone:** Customer sees driver moving on a map in real-time.
 
 ## Phase 4: Production Readiness & Optimization
 **Goal:** Scalability, Resilience, and Observability.

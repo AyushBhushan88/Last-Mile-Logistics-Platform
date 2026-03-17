@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/ayush/logistics-platform/internal/spatial"
 	"github.com/ayush/logistics-platform/pkg/api"
 	"github.com/redis/go-redis/v9"
 )
@@ -13,6 +14,7 @@ type MatchingEngine struct {
 	redisClient     *redis.Client
 	locationService api.LocationServiceClient
 	orderHandler    *OrderHandler
+	routingEngine   spatial.RoutingEngine
 }
 
 func NewMatchingEngine(redisClient *redis.Client, locationService api.LocationServiceClient, orderHandler *OrderHandler) *MatchingEngine {
@@ -20,11 +22,12 @@ func NewMatchingEngine(redisClient *redis.Client, locationService api.LocationSe
 		redisClient:     redisClient,
 		locationService: locationService,
 		orderHandler:    orderHandler,
+		routingEngine:   spatial.NewHaversineRouting(30.0), // Default 30km/h
 	}
 }
 
-// FindDriver finds the best driver for an order
-func (m *MatchingEngine) FindDriver(ctx context.Context, order *api.Order) (string, error) {
+// FindDriver finds the best driver for an order and returns driverID and ETA
+func (m *MatchingEngine) FindDriver(ctx context.Context, order *api.Order) (string, float64, error) {
 	// 1. Initial radius search (e.g., 5km)
 	radius := 5.0
 	maxRadius := 20.0
@@ -39,20 +42,17 @@ func (m *MatchingEngine) FindDriver(ctx context.Context, order *api.Order) (stri
 		})
 		
 		if err != nil {
-			return "", err
+			return "", 0, err
 		}
 
 		if len(res.Drivers) > 0 {
-			// In a real system, we'd rank them or ask them to accept.
-			// For now, we take the nearest one.
-			// We should also check if the driver is currently "Available" (not on another order).
-			// For simplicity, we'll assume any online driver is available.
-			
 			for _, d := range res.Drivers {
 				// Check if driver is already busy
 				isBusy, _ := m.redisClient.SIsMember(ctx, "busy_drivers", d.DriverId).Result()
 				if !isBusy {
-					return d.DriverId, nil
+					// Calculate ETA
+					_, eta, _ := m.routingEngine.CalculateRoute(d.Latitude, d.Longitude, order.PickupLatitude, order.PickupLongitude)
+					return d.DriverId, eta, nil
 				}
 			}
 		}
@@ -62,7 +62,7 @@ func (m *MatchingEngine) FindDriver(ctx context.Context, order *api.Order) (stri
 		time.Sleep(500 * time.Millisecond) // Don't spam
 	}
 
-	return "", nil
+	return "", 0, nil
 }
 
 func (m *MatchingEngine) ProcessPendingOrders(ctx context.Context) {

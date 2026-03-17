@@ -1,9 +1,9 @@
 # Project State: Last-Mile Logistics Platform
 
 ## Current Status
-- **Phase:** 3 - Live Tracking & Customer Experience (In Progress)
-- **Active Task:** Implementing ETA Calculation
-- **Last Milestone:** Driver Assignment State Machine (Wait/Accept/Retry) implemented.
+- **Phase:** 3 - Live Tracking & Customer Experience (Completed)
+- **Active Task:** Finalizing Phase 3 and preparing for Production Readiness
+- **Last Milestone:** Haversine-based ETA calculation integrated into Matching Engine.
 
 ## Completed Milestones
 - [x] Project scaffolding and Go module initialization.
@@ -15,6 +15,7 @@
 - [x] Implement Driver Assignment State Machine (with timeouts and retries).
 - [x] Implement Customer WebSocket service for live updates.
 - [x] Build the "Tracking Stream" aggregator (Redis Pub/Sub).
+- [x] Implement Haversine-based ETA calculation.
 
 ## Technical Decisions
 1. **Spatial Index:** H3 (Hexagonal) selected over Geohash for consistent neighbor distance.

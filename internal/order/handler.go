@@ -74,7 +74,7 @@ func (h *OrderHandler) assignmentWorkflow(order *api.Order) {
 		attempt++
 		log.Printf("Assignment attempt %d for order %s", attempt, order.OrderId)
 
-		driverID, err := h.matchingEngine.FindDriver(ctx, order)
+		driverID, eta, err := h.matchingEngine.FindDriver(ctx, order)
 		if err != nil {
 			log.Printf("Matching failed for order %s: %v", order.OrderId, err)
 			time.Sleep(5 * time.Second)
@@ -88,8 +88,10 @@ func (h *OrderHandler) assignmentWorkflow(order *api.Order) {
 		}
 
 		// Found a driver, offer them the order
-		log.Printf("Offering order %s to driver %s", order.OrderId, driverID)
+		log.Printf("Offering order %s to driver %s (Estimated ETA: %fs)", order.OrderId, driverID, eta)
 		
+		// Update status and set ETA
+		order.EstimatedEtaSeconds = eta
 		h.UpdateOrderStatus(ctx, &api.UpdateOrderStatusRequest{
 			OrderId:  order.OrderId,
 			Status:   api.OrderStatus_ORDER_STATUS_MATCHED,
